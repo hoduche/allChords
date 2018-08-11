@@ -1,0 +1,10 @@
+{
+"guitarChords":[
+    {"firstName":"A", "alternateName":"Amaj", "fingers":"[0 0 2 2 2 0]", "notes":"(C# E  A)", "type":"major triad"},
+    {"firstName":"A", "alternateName":"Amaj", "fingers":"[0 4 x 2 5 0]", "notes":"(Db E  A)", "type":"major triad"},
+    {"firstName":"A", "alternateName":"Amaj", "fingers":"[5 7 7 6 5 5]", "notes":"(Db E  A)", "type":"major triad"},
+    {"firstName":"A#5", "alternateName":"Aaug", "fingers":"[x 0 3 2 2 1]", "notes":"(Db F  A)", "type":"augmented triad"},
+    {"firstName":"A#5", "alternateName":"Aaug", "fingers":"[x 0 x 2 2 1]", "notes":"(Db F  A)", "type":"augmented triad"},
+    {"firstName":"A/D", "alternateName":"", "fingers":"[x 0 0 2 2 0]", "notes":"(Db D  E  A)", "type":"major triad (altered bass)"}
+]
+}

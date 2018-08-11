@@ -1,0 +1,25 @@
+var k = 15;
+
+// callback asynchrone
+// qui prend en paramètre une callback synchrone
+function setTimeoutCB(callback, counter) {
+    console.log('setTimeoutCB()');
+    callback(null, counter);
+}
+
+// callback synchrone
+function getDataCB(error, data) {
+    console.log('getDataCB()');
+    console.log('data: ', data+1);
+}
+
+// Définition de la fonction getData()
+// qui prend en paramètre une callback synchrone
+function getData(callback) {
+    console.log('getData()');
+    setTimeout(setTimeoutCB, 1500, callback, ++k);
+}
+
+// Appel de la fonction getData()
+// en lui passant une callback synchrone
+getData(getDataCB);
