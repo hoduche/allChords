@@ -24,35 +24,82 @@ function parseChords(chords) {
 
 function drawSvg(shape, attributes, text=null) {
     var ns = 'http://www.w3.org/2000/svg'
-    var result = document.createElementNS(ns, shape);
+    var result = document.createElementNS(ns, shape)
     for (var each in attributes) {
-        result.setAttributeNS(null, each, attributes[each]);
+        result.setAttributeNS(null, each, attributes[each])
     }
     if (text) {
-        var textNode = document.createTextNode(text);
-        result.appendChild(textNode);
+        var textNode = document.createTextNode(text)
+        result.appendChild(textNode)
     }
     return result
  }
 
+var GUI_COLOR_GREYEDBLUE = 'rgb(195, 220, 240)'   // #C3DCF0
+var GUI_COLOR_LIGHTBLUE = 'rgb(225 ,240 ,250)'   // #E1F0FA
+
+var GUI_PLAIN_FONT = 'font:bold 13px sans-serif'
+var GUI_SMALL_FONT = 'font:11px sans-serif'
+
+var GUI_RECTANGLE_CHORD_WIDTH = 124
+var GUI_RECTANGLE_CHORD_HEIGHT = 200   // golden number ratio
+
+var TITLE_HEIGHT = 40
+var BIG_INSET = 30
+var SMALL_INSET = 6
+var NB_STRINGS = 6
+var NB_FRETS = 6
+var TOP_FRET = 7
+var CENTER = 3
+var RADIUS_RATIO_NUM = 2
+var RADIUS_RATIO_DEN = 3
+var interStrings = 12
+var interFrets = 20
+
+
 function createSvgChord(guitarChord) {
-    var svg = drawSvg('svg', {width:140, height:170})
-    svg.appendChild(drawSvg('rect', {rx:20, ry:20, x:10, y:10, width:120, height:150, fill:'red', stroke:'black', 'stroke-width':5, opacity:0.5}))
-    svg.appendChild(drawSvg('rect', {x:20, y:20, width:100, height:130, fill:'rgb(150,255,255)', stroke:'black'}))
-    svg.appendChild(drawSvg('circle', {cx:70, cy:120, r:10, fill:'rgb(200,50,50)', stroke:'black', 'stroke-width':2}))
-    svg.appendChild(drawSvg('line', {x1:20, y1:20, x2:120, y2:150, stroke:'rgb(200,200,200)', 'stroke-width':2}))
-    svg.appendChild(drawSvg('line', {x1:120, y1:20, x2:20, y2:150, stroke:'rgb(0,200,0)', 'stroke-width':2}))
-    svg.appendChild(drawSvg('text', {x:50, y:90, fill:'blue'}, guitarChord.firstName))
-    return svg
+    var svgGlob = drawSvg('svg', {width:GUI_RECTANGLE_CHORD_WIDTH + SMALL_INSET, height:GUI_RECTANGLE_CHORD_HEIGHT + SMALL_INSET})
+    svgGlob.appendChild(drawSvg('rect', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT, fill:GUI_COLOR_LIGHTBLUE, stroke:'black', 'stroke-width':1}))
+
+    var svgTop = drawSvg('svg', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:TITLE_HEIGHT})
+    svgGlob.appendChild(svgTop)
+
+    svgTop.appendChild(drawSvg('text', {x:'50%', y:'50%', fill:'black', 'alignment-baseline':"middle", 'text-anchor':"middle", style:GUI_PLAIN_FONT}, guitarChord.firstName))
+
+    var svgBottom = drawSvg('svg', {x:SMALL_INSET / 2, y:TITLE_HEIGHT, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT - TITLE_HEIGHT})
+    svgGlob.appendChild(svgBottom)
+
+    svgBottom.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET - TOP_FRET, width:(NB_STRINGS - 1) * interStrings, height:TOP_FRET, fill:'white', stroke:'black'}))
+    svgBottom.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET, width:(NB_STRINGS - 1) * interStrings, height:(NB_FRETS - 1) * interFrets, fill:'white', stroke:'black'}))
+    for (var i = 0; i < NB_FRETS; i++)
+    {
+        svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET, y1:BIG_INSET + i * interFrets, x2:BIG_INSET + (NB_STRINGS - 1) * interStrings, y2:BIG_INSET + i * interFrets, stroke:'gray'}))
+    }
+    var radius = 0.5 * RADIUS_RATIO_NUM * Math.min(interStrings, interFrets) / RADIUS_RATIO_DEN
+    var member = 3
+    for (var i = 0; i < 6; i++)
+    {
+        svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * interStrings, y1:BIG_INSET, x2:BIG_INSET + i * interStrings, y2:BIG_INSET + (NB_FRETS - 1) * interFrets, stroke:'black'}))
+        svgBottom.appendChild(drawSvg('circle', {cx:BIG_INSET + i * interStrings, cy:BIG_INSET - interFrets / 2 + member * interFrets, r:radius}))
+    }
+
+    svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + 0 * interStrings, y:BIG_INSET / 2 + CENTER, fill:'gray', style:GUI_SMALL_FONT}, "E"))
+    svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + 1 * interStrings, y:BIG_INSET / 2 + CENTER, fill:'gray', style:GUI_SMALL_FONT}, "A"))
+    svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + 2 * interStrings, y:BIG_INSET / 2 + CENTER, fill:'gray', style:GUI_SMALL_FONT}, "D"))
+    svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + 3 * interStrings, y:BIG_INSET / 2 + CENTER, fill:'gray', style:GUI_SMALL_FONT}, "G"))
+    svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + 4 * interStrings, y:BIG_INSET / 2 + CENTER, fill:'gray', style:GUI_SMALL_FONT}, "B"))
+    svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + 5 * interStrings, y:BIG_INSET / 2 + CENTER, fill:'gray', style:GUI_SMALL_FONT}, "E"))
+
+    return svgGlob
 }
 
 var url = "http://localhost:8000/guitarChordDictionary.json"
 var chords = loadJsonFile(url)
 
-var htmlChordsList = parseChords(chords)
-document.getElementById("chordsUL").innerHTML = htmlChordsList
+// var htmlChordsList = parseChords(chords)
+// document.getElementById("chordsUL").innerHTML = htmlChordsList
 
 for (var each of chords.guitarChords) {
-    var svg = createSvgChord(each)
-    document.getElementById('placeHolder').appendChild(svg)
+    var svgBottom = createSvgChord(each)
+    document.getElementById('placeHolder').appendChild(svgBottom)
 }
