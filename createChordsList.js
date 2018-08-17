@@ -69,21 +69,17 @@ var NumberOfDisplayedFrets = 5
 
 var guitarStrings = ['E', 'A', 'D', 'G', 'B', 'E']
 var notes = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#']
+var stringNotes = [7, 0, 5, 10, 2, 7] // notes.indexOf(guitarStrings[i]) for i in 0 .. guitarStrings.length
 
-function treble(note) {
-    var index = notes.indexOf(note)
-    if (index < notes.length - 1) {
-        return notes[index + 1]
-    }
-    else {
-        return notes[0]
-    }
-}
+function treble(guitarString, finger) {
+    var stringNote = stringNotes[guitarString]
+    return notes[(stringNote + finger) % notes.length]
+ }
 
 function getMaxFinger(guitarChord) {
     result = 0
-    for (var i = 0; i < 6; i++) {
-        var finger = guitarChord.fingers[2 * i + 1]
+    for (var i = 0; i < guitarStrings.length; i++) {
+        var finger = guitarChord.fingers[i]
         if (result < finger && finger != 'x') {
             result = finger
         }
@@ -92,9 +88,9 @@ function getMaxFinger(guitarChord) {
 }
 
 function getMinFinger(guitarChord) {
-    result = 500
-    for (var i = 0; i < 6; i++) {
-        var finger = guitarChord.fingers[2 * i + 1]
+    result = +Infinity
+    for (var i = 0; i < guitarStrings.length; i++) {
+        var finger = guitarChord.fingers[i]
         if (0 < finger && finger < result  && finger != 'x') {
             result = finger
         }
@@ -131,30 +127,27 @@ function createSvgChord(guitarChord) {
     if (1 < firstDisplayedFret) {
         svgBottom.appendChild(drawSvg('text', {x:9, y:45, style:GUI_SMALL_FONT}, firstDisplayedFret + 'fr'))   // FIXME avoid magic numbers
     }
-    for (var i = 0; i < 6; i++)
+    for (var i = 0; i < guitarStrings.length; i++)
     {
-        var member = guitarChord.fingers[2 * i + 1]
-        if (member == 'x') {
+        var finger = guitarChord.fingers[i]
+        if (finger == 'x') {
             svgBottom.appendChild(drawSvg('text', {x:BIG_INSET + i * interStrings, y:BIG_INSET, 'text-anchor':"middle", fill:GUI_COLOR_ORANGERED, style:GUI_PLAIN_FONT}, 'x'))
             svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * interStrings, y1:BIG_INSET, x2:BIG_INSET + i * interStrings, y2:BIG_INSET + (NB_FRETS - 1) * interFrets, stroke:GUI_COLOR_ORANGERED, 'stroke-dasharray':'2,3'}))
         }
         else {
             svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * interStrings, y1:BIG_INSET, x2:BIG_INSET + i * interStrings, y2:BIG_INSET + (NB_FRETS - 1) * interFrets, stroke:'black'}))
-            var note = guitarStrings[i]
-            for (var j = 0; j < member; j++) {
-                note = treble(note)
-            }
-            svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * interStrings, y:BIG_INSET + (NB_FRETS - 1) * interFrets + BIG_INSET / 2, style:GUI_SMALL_FONT}, note[0], (note.length == 2) ? note[1] : null))
+            var playedNote = treble(i, finger)
+            svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * interStrings, y:BIG_INSET + (NB_FRETS - 1) * interFrets + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
             if (1 < firstDisplayedFret) {
-                member -= (firstDisplayedFret - 1)
+                finger -= (firstDisplayedFret - 1)
             }
-            if (member >= 1) {
-                svgBottom.appendChild(drawSvg('circle', {cx:BIG_INSET + i * interStrings, cy:BIG_INSET - interFrets / 2 + member * interFrets, r:radius}))
+            if (finger >= 1) {
+                svgBottom.appendChild(drawSvg('circle', {cx:BIG_INSET + i * interStrings, cy:BIG_INSET - interFrets / 2 + finger * interFrets, r:radius}))
             } 
         }
     }
 
-    for (var i = 0; i < 6; i++)
+    for (var i = 0; i < guitarStrings.length; i++)
     {
         svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * interStrings, y:BIG_INSET / 2 + CENTER, fill:GUI_COLOR_GREY, style:GUI_SMALL_FONT}, guitarStrings[i]))
     }
@@ -179,4 +172,3 @@ function drawFrets(svgBottom) {
     }
     return i
 }
-
