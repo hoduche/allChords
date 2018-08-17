@@ -44,28 +44,28 @@ function drawSvg(shape, attributes, text=null, subscriptText=null) {
 var GUI_COLOR_GREYEDBLUE = 'rgb(195, 220, 240)'   // #C3DCF0
 var GUI_COLOR_LIGHTBLUE = 'rgb(225 ,240 ,250)'   // #E1F0FA
 var GUI_COLOR_ORANGERED ='rgb(238, 0, 0)'   // #EE0000
-var GUI_COLOR_GREY ='rgb(180, 180, 180)'
+var GUI_COLOR_GREY ='rgb(160, 160, 160)'
 
-var GUI_PLAIN_FONT = 'font:bold 13px sans-serif'
-var GUI_SMALL_FONT = 'font:10px sans-serif'
-var GUI_INDEX_FONT = 'font:6px sans-serif'
+var GUI_PLAIN_FONT = 'font:bold 16px sans-serif'
+var GUI_SMALL_FONT = 'font:12px sans-serif'
+var GUI_INDEX_FONT = 'font:8px sans-serif'
 
-var GUI_RECTANGLE_CHORD_WIDTH = 124
-var GUI_RECTANGLE_CHORD_HEIGHT = 200   // golden number ratio
+var GUI_RECTANGLE_CHORD_WIDTH = 155
+var GUI_RECTANGLE_CHORD_HEIGHT = 250   // golden number ratio
 
-var TITLE_HEIGHT = 40
-var BIG_INSET = 30
-var SMALL_INSET = 6
+var TITLE_HEIGHT = 50
+var BIG_INSET = 37.5
+var SMALL_INSET = 7.5
+var CENTER = 3.75
+var RADIUS_RATIO_NUM = 2.5
+var RADIUS_RATIO_DEN = 3.75
+var INTER_STRINGS = 15
+var INTER_FRETS = 25
+
 var NB_STRINGS = 6
 var NB_FRETS = 6
 var TOP_FRET = 7
-var CENTER = 3
-var RADIUS_RATIO_NUM = 2
-var RADIUS_RATIO_DEN = 3
-var interStrings = 12
-var interFrets = 20
-
-var NumberOfDisplayedFrets = 5
+var NB_DISPLAYED_FRETS = 5
 
 var guitarStrings = ['E', 'A', 'D', 'G', 'B', 'E']
 var notes = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#']
@@ -119,37 +119,37 @@ function createSvgChord(guitarChord) {
     var svgBottom = drawSvg('svg', {x:SMALL_INSET / 2, y:TITLE_HEIGHT, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT - TITLE_HEIGHT})
     svgGlob.appendChild(svgBottom)
 
-    svgBottom.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET, width:(NB_STRINGS - 1) * interStrings, height:(NB_FRETS - 1) * interFrets, fill:'white', stroke:'white'}))
-    svgBottom.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET - TOP_FRET, width:(NB_STRINGS - 1) * interStrings, height:TOP_FRET, fill:'white', stroke:'black'}))
+    svgBottom.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET, width:(NB_STRINGS - 1) * INTER_STRINGS, height:(NB_FRETS - 1) * INTER_FRETS, fill:'white', stroke:'white'}))
+    svgBottom.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET - TOP_FRET, width:(NB_STRINGS - 1) * INTER_STRINGS, height:TOP_FRET, fill:'white', stroke:'black'}))
     drawFrets(svgBottom)
-    var radius = 0.5 * RADIUS_RATIO_NUM * Math.min(interStrings, interFrets) / RADIUS_RATIO_DEN
-    var firstDisplayedFret = getFirstDisplayedFret(guitarChord, NumberOfDisplayedFrets)
+    var radius = 0.5 * RADIUS_RATIO_NUM * Math.min(INTER_STRINGS, INTER_FRETS) / RADIUS_RATIO_DEN
+    var firstDisplayedFret = getFirstDisplayedFret(guitarChord, NB_DISPLAYED_FRETS)
     if (1 < firstDisplayedFret) {
-        svgBottom.appendChild(drawSvg('text', {x:9, y:45, style:GUI_SMALL_FONT}, firstDisplayedFret + 'fr'))   // FIXME avoid magic numbers
+        svgBottom.appendChild(drawSvg('text', {x:SMALL_INSET + SMALL_INSET / 2, y:BIG_INSET - INTER_FRETS / 2 + INTER_FRETS, 'alignment-baseline':"middle", style:GUI_SMALL_FONT}, firstDisplayedFret + 'fr'))
     }
     for (var i = 0; i < guitarStrings.length; i++)
     {
         var finger = guitarChord.fingers[i]
         if (finger == 'x') {
-            svgBottom.appendChild(drawSvg('text', {x:BIG_INSET + i * interStrings, y:BIG_INSET, 'text-anchor':"middle", fill:GUI_COLOR_ORANGERED, style:GUI_PLAIN_FONT}, 'x'))
-            svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * interStrings, y1:BIG_INSET, x2:BIG_INSET + i * interStrings, y2:BIG_INSET + (NB_FRETS - 1) * interFrets, stroke:GUI_COLOR_ORANGERED, 'stroke-dasharray':'2,3'}))
+            svgBottom.appendChild(drawSvg('text', {x:BIG_INSET + i * INTER_STRINGS, y:BIG_INSET, 'text-anchor':"middle", fill:GUI_COLOR_ORANGERED, style:GUI_PLAIN_FONT}, 'x'))
+            svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * INTER_STRINGS, y1:BIG_INSET, x2:BIG_INSET + i * INTER_STRINGS, y2:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS, stroke:GUI_COLOR_ORANGERED, 'stroke-dasharray':'2,3'}))
         }
         else {
-            svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * interStrings, y1:BIG_INSET, x2:BIG_INSET + i * interStrings, y2:BIG_INSET + (NB_FRETS - 1) * interFrets, stroke:'black'}))
+            svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * INTER_STRINGS, y1:BIG_INSET, x2:BIG_INSET + i * INTER_STRINGS, y2:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS, stroke:'black'}))
             var playedNote = treble(i, finger)
-            svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * interStrings, y:BIG_INSET + (NB_FRETS - 1) * interFrets + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
+            svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
             if (1 < firstDisplayedFret) {
                 finger -= (firstDisplayedFret - 1)
             }
             if (finger >= 1) {
-                svgBottom.appendChild(drawSvg('circle', {cx:BIG_INSET + i * interStrings, cy:BIG_INSET - interFrets / 2 + finger * interFrets, r:radius}))
+                svgBottom.appendChild(drawSvg('circle', {cx:BIG_INSET + i * INTER_STRINGS, cy:BIG_INSET - INTER_FRETS / 2 + finger * INTER_FRETS, r:radius}))
             } 
         }
     }
 
     for (var i = 0; i < guitarStrings.length; i++)
     {
-        svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * interStrings, y:BIG_INSET / 2 + CENTER, fill:GUI_COLOR_GREY, style:GUI_SMALL_FONT}, guitarStrings[i]))
+        svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET / 2 + CENTER, fill:GUI_COLOR_GREY, style:GUI_SMALL_FONT}, guitarStrings[i]))
     }
 
     return svgGlob
@@ -168,7 +168,7 @@ for (var each of chords.guitarChords) {
 
 function drawFrets(svgBottom) {
     for (var i = 0; i < NB_FRETS; i++) {
-        svgBottom.appendChild(drawSvg('line', { x1: BIG_INSET, y1: BIG_INSET + i * interFrets, x2: BIG_INSET + (NB_STRINGS - 1) * interStrings, y2: BIG_INSET + i * interFrets, stroke: 'gray' }))
+        svgBottom.appendChild(drawSvg('line', { x1: BIG_INSET, y1: BIG_INSET + i * INTER_FRETS, x2: BIG_INSET + (NB_STRINGS - 1) * INTER_STRINGS, y2: BIG_INSET + i * INTER_FRETS, stroke: 'gray' }))
     }
     return i
 }
