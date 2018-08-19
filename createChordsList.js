@@ -9,19 +9,6 @@ function loadJsonFile(url) {
     return result
 }
 
-function parseChords(chords) {
-    var result = '<ul id="chordsUL">'
-    for(var each of chords.guitarChords) {
-        result += '<li><a href="#">' + 
-                    each.firstName +
-                    " : " +
-                    each.fingers +
-                    "</a></li>"
-    }
-    result += '</ul>'
-    return result
-}
-
 function drawSvg(shape, attributes, text=null, subscriptText=null) {
     var ns = 'http://www.w3.org/2000/svg'
     var result = document.createElementNS(ns, shape)
@@ -107,14 +94,18 @@ function getFirstDisplayedFret(guitarChord, numberOfDisplayedFrets) {
     }
 }
 
-function createSvgChord(guitarChord) {
-    var svgGlob = drawSvg('svg', {width:GUI_RECTANGLE_CHORD_WIDTH + SMALL_INSET, height:GUI_RECTANGLE_CHORD_HEIGHT + SMALL_INSET})
+function createSvgChord(guitarChord, uniqueId) {
+    var svgGlob = drawSvg('svg', {id: 'svg'+uniqueId, width:GUI_RECTANGLE_CHORD_WIDTH + SMALL_INSET, height:GUI_RECTANGLE_CHORD_HEIGHT + SMALL_INSET})
     svgGlob.appendChild(drawSvg('rect', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT, fill:GUI_COLOR_LIGHTBLUE, stroke:'black', 'stroke-width':1}))
 
     var svgTop = drawSvg('svg', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:TITLE_HEIGHT})
     svgGlob.appendChild(svgTop)
 
-    svgTop.appendChild(drawSvg('text', {x:'50%', y:'50%', fill:'black', 'alignment-baseline':"middle", 'text-anchor':"middle", style:GUI_PLAIN_FONT}, guitarChord.firstName))
+    var fullName = guitarChord.firstName
+    if (guitarChord.alternateName != "" ) {
+        fullName += ' or ' + guitarChord.alternateName   // FIXME tspan to have 'or' not in bold
+    }
+    svgTop.appendChild(drawSvg('text', {id: 'name'+uniqueId, x:'50%', y:'50%', fill:'black', 'alignment-baseline':"middle", 'text-anchor':"middle", style:GUI_PLAIN_FONT}, fullName))
 
     var svgBottom = drawSvg('svg', {x:SMALL_INSET / 2, y:TITLE_HEIGHT, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT - TITLE_HEIGHT})
     svgGlob.appendChild(svgBottom)
@@ -155,20 +146,18 @@ function createSvgChord(guitarChord) {
     return svgGlob
 }
 
+function drawFrets(svg) {
+    for (var i = 0; i < NB_FRETS; i++) {
+        svg.appendChild(drawSvg('line', { x1: BIG_INSET, y1: BIG_INSET + i * INTER_FRETS, x2: BIG_INSET + (NB_STRINGS - 1) * INTER_STRINGS, y2: BIG_INSET + i * INTER_FRETS, stroke: 'gray' }))
+    }
+}
+
 var url = "http://localhost:8000/guitarChordDictionary.json"
 var chords = loadJsonFile(url)
 
-// var htmlChordsList = parseChords(chords)
-// document.getElementById("chordsUL").innerHTML = htmlChordsList
-
+var svgContainer = document.getElementById('svgContainer')
+var uniqueId = 0
 for (var each of chords.guitarChords) {
-    var svgBottom = createSvgChord(each)
-    document.getElementById('placeHolder').appendChild(svgBottom)
-}
-
-function drawFrets(svgBottom) {
-    for (var i = 0; i < NB_FRETS; i++) {
-        svgBottom.appendChild(drawSvg('line', { x1: BIG_INSET, y1: BIG_INSET + i * INTER_FRETS, x2: BIG_INSET + (NB_STRINGS - 1) * INTER_STRINGS, y2: BIG_INSET + i * INTER_FRETS, stroke: 'gray' }))
-    }
-    return i
+    var svgChord = createSvgChord(each, uniqueId++)
+    svgContainer.appendChild(svgChord)
 }

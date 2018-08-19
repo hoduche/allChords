@@ -1,13 +1,13 @@
 function reactToUserInput() {
-    var input = document.getElementById("searchZone").value.toLowerCase()
-    var ul = document.getElementById("chordsUL")
-    var li = ul.getElementsByTagName("li")
-    for (var each of li) {
-        var a = each.getElementsByTagName("a")[0]
-        if (a.innerHTML.toLowerCase().indexOf(input) > -1) {
-            each.style.display = ""
+    var userInput = document.getElementById("searchZone").value.toLowerCase()
+
+    for (var i = 0; i < chords.guitarChords.length; i++) {
+        var svgElement = document.getElementById('svg' + i)
+        var chordName = document.getElementById('name' + i).innerHTML.toLowerCase()
+        if (chordName.indexOf(userInput) > -1) {
+            svgElement.style.display = ""
         } else {
-            each.style.display = "none"
+            svgElement.style.display = "none"
         }
     }
 }
