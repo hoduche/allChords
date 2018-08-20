@@ -58,7 +58,7 @@ var GUI_COLOR_LIGHTBLUE = 'rgb(225 ,240 ,250)'   // #E1F0FA
 var GUI_COLOR_ORANGERED ='rgb(238, 0, 0)'   // #EE0000
 var GUI_COLOR_GREY ='rgb(160, 160, 160)'
 
-var GUI_PLAIN_FONT = 'font:bold 16px sans-serif'
+var GUI_PLAIN_FONT = 'font:bold 14px sans-serif'
 var GUI_SMALL_FONT = 'font:12px sans-serif'
 var GUI_INDEX_FONT = 'font:8px sans-serif'
 
@@ -214,7 +214,7 @@ function drawPlayedNote(svg, i, finger) {
     svg.appendChild(drawSvgNotePlayed({x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
 }
 
-var url = "http://localhost:8000/guitarChordDictionarySample.json"
+var url = "http://localhost:8000/guitarChordDictionary.json"
 var chords = loadJsonFile(url)
 
 var svgContainer = document.getElementById('svgContainer')
