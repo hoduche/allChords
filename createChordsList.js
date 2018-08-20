@@ -9,25 +9,51 @@ function loadJsonFile(url) {
     return result
 }
 
-function drawSvg(shape, attributes, text=null, subscriptText=null) {
-    var ns = 'http://www.w3.org/2000/svg'
+function drawSvg(shape, attributes) {
     var result = document.createElementNS(ns, shape)
     for (var each in attributes) {
         result.setAttributeNS(null, each, attributes[each])
     }
-    if (text) {
-        result.appendChild(document.createTextNode(text))
-    }
-    if (subscriptText) {
+    return result
+}
+
+function drawSvgText(attributes, text) {
+    var result = drawSvg('text', attributes)
+    result.appendChild(document.createTextNode(text))
+    return result
+}
+
+function drawSvgNotePlayed(attributes, note, accident=null) {
+    var result = drawSvgText(attributes, note)
+    if (accident) {
         var tspan = document.createElementNS(ns, 'tspan')
         tspan.setAttributeNS(null, 'style', GUI_INDEX_FONT)
         tspan.setAttributeNS(null, 'dy', -CENTER)
-        tspan.appendChild(document.createTextNode(subscriptText))
+        tspan.appendChild(document.createTextNode(accident))
         result.appendChild(tspan)
     }
     return result
- }
+}
 
+function drawSvgChordName(attributes, name, alternateName=null) {
+    var result = drawSvgText(attributes, name)
+    if (alternateName) {
+        var tspan = document.createElementNS(ns, 'tspan')
+        tspan.setAttributeNS(null, 'style', GUI_SMALL_FONT)
+        tspan.setAttributeNS(null, 'alignment-baseline', "middle")
+        tspan.appendChild(document.createTextNode(' or '))
+        result.appendChild(tspan)
+        var tspan2 = document.createElementNS(ns, 'tspan')
+        tspan2.setAttributeNS(null, 'style', GUI_PLAIN_FONT)
+        tspan2.setAttributeNS(null, 'alignment-baseline', "middle")
+        tspan2.appendChild(document.createTextNode(alternateName))
+        result.appendChild(tspan2)
+    }
+    return result
+}
+
+var ns = 'http://www.w3.org/2000/svg'
+ 
 var GUI_COLOR_LIGHTBLUE = 'rgb(225 ,240 ,250)'   // #E1F0FA
 var GUI_COLOR_ORANGERED ='rgb(238, 0, 0)'   // #EE0000
 var GUI_COLOR_GREY ='rgb(160, 160, 160)'
@@ -100,11 +126,7 @@ function createSvgChord(guitarChord, uniqueId) {
     var svgTop = drawSvg('svg', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:TITLE_HEIGHT})
     svgGlob.appendChild(svgTop)
 
-    var fullName = guitarChord.firstName
-    if (guitarChord.alternateName != "" ) {
-        fullName += ' or ' + guitarChord.alternateName   // FIXME tspan to have 'or' not in bold
-    }
-    svgTop.appendChild(drawSvg('text', {id: 'name'+uniqueId, x:'50%', y:'50%', fill:'black', 'alignment-baseline':"middle", 'text-anchor':"middle", style:GUI_PLAIN_FONT}, fullName))
+    svgTop.appendChild(drawSvgChordName({id: 'name'+uniqueId, x:'50%', y:'50%', fill:'black', 'alignment-baseline':"middle", 'text-anchor':"middle", style:GUI_PLAIN_FONT}, guitarChord.firstName, guitarChord.alternateName))
 
     var svgBottom = drawSvg('svg', {x:SMALL_INSET / 2, y:TITLE_HEIGHT, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT - TITLE_HEIGHT})
     svgGlob.appendChild(svgBottom)
@@ -115,19 +137,19 @@ function createSvgChord(guitarChord, uniqueId) {
     var radius = 0.5 * RADIUS_RATIO_NUM * Math.min(INTER_STRINGS, INTER_FRETS) / RADIUS_RATIO_DEN
     var firstDisplayedFret = getFirstDisplayedFret(guitarChord, NB_DISPLAYED_FRETS)
     if (1 < firstDisplayedFret) {
-        svgBottom.appendChild(drawSvg('text', {x:SMALL_INSET + SMALL_INSET / 2, y:BIG_INSET - INTER_FRETS / 2 + INTER_FRETS, 'alignment-baseline':"middle", style:GUI_SMALL_FONT}, firstDisplayedFret + 'fr'))
+        svgBottom.appendChild(drawSvgText({x:SMALL_INSET + SMALL_INSET / 2, y:BIG_INSET - INTER_FRETS / 2 + INTER_FRETS, 'alignment-baseline':"middle", style:GUI_SMALL_FONT}, firstDisplayedFret + 'fr'))
     }
     for (var i = 0; i < guitarStrings.length; i++)
     {
         var finger = guitarChord.fingers[i]
         if (finger == 'x') {
-            svgBottom.appendChild(drawSvg('text', {x:BIG_INSET + i * INTER_STRINGS, y:BIG_INSET, 'text-anchor':"middle", fill:GUI_COLOR_ORANGERED, style:GUI_PLAIN_FONT}, 'x'))
+            svgBottom.appendChild(drawSvgText({x:BIG_INSET + i * INTER_STRINGS, y:BIG_INSET, 'text-anchor':"middle", fill:GUI_COLOR_ORANGERED, style:GUI_PLAIN_FONT}, 'x'))
             svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * INTER_STRINGS, y1:BIG_INSET, x2:BIG_INSET + i * INTER_STRINGS, y2:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS, stroke:GUI_COLOR_ORANGERED, 'stroke-dasharray':'2,3'}))
         }
         else {
             svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * INTER_STRINGS, y1:BIG_INSET, x2:BIG_INSET + i * INTER_STRINGS, y2:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS, stroke:'black'}))
             var playedNote = treble(i, finger)
-            svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
+            svgBottom.appendChild(drawSvgNotePlayed({x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
             if (1 < firstDisplayedFret) {
                 finger -= (firstDisplayedFret - 1)
             }
@@ -139,7 +161,7 @@ function createSvgChord(guitarChord, uniqueId) {
 
     for (var i = 0; i < guitarStrings.length; i++)
     {
-        svgBottom.appendChild(drawSvg('text', {x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET / 2 + CENTER, fill:GUI_COLOR_GREY, style:GUI_SMALL_FONT}, guitarStrings[i]))
+        svgBottom.appendChild(drawSvgText({x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET / 2 + CENTER, fill:GUI_COLOR_GREY, style:GUI_SMALL_FONT}, guitarStrings[i]))
     }
 
     return svgGlob
