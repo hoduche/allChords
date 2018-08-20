@@ -28,7 +28,6 @@ function drawSvg(shape, attributes, text=null, subscriptText=null) {
     return result
  }
 
-var GUI_COLOR_GREYEDBLUE = 'rgb(195, 220, 240)'   // #C3DCF0
 var GUI_COLOR_LIGHTBLUE = 'rgb(225 ,240 ,250)'   // #E1F0FA
 var GUI_COLOR_ORANGERED ='rgb(238, 0, 0)'   // #EE0000
 var GUI_COLOR_GREY ='rgb(160, 160, 160)'
@@ -56,7 +55,7 @@ var NB_DISPLAYED_FRETS = 5
 
 var guitarStrings = ['E', 'A', 'D', 'G', 'B', 'E']
 var notes = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#']
-var stringNotes = [7, 0, 5, 10, 2, 7] // notes.indexOf(guitarStrings[i]) for i in 0 .. guitarStrings.length
+var stringNotes = [7, 0, 5, 10, 2, 7] // could be dynamically deduced: notes.indexOf(guitarStrings[i]) for i in [0, guitarStrings.length[
 
 function treble(guitarString, finger) {
     var stringNote = stringNotes[guitarString]
@@ -152,7 +151,7 @@ function drawFrets(svg) {
     }
 }
 
-var url = "http://localhost:8000/guitarChordDictionary.json"
+var url = "http://localhost:8000/guitarChordDictionarySample.json"
 var chords = loadJsonFile(url)
 
 var svgContainer = document.getElementById('svgContainer')

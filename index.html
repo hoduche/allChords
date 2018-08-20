@@ -7,12 +7,13 @@
 </head>
 <body>
 
-<h2>Chords</h2>
+<div class="center">
+    <h2>Guitar Chords</h2>
+    <input type="text" id="searchZone" onkeyup="reactToUserInput()" placeholder="Search for chords" title="Type in a chord" autofocus>
+    <p id="svgContainer"></p>
+</div>
 
-<input type="text" id="searchZone" onkeyup="reactToUserInput()" placeholder="Search for chords..." title="Type in a chord">
 <script src="reactToUserInput.js"></script>
-
-<p id="svgContainer"></p>
 <script src="createChordsList.js"></script>
 
 </body>
