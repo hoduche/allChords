@@ -79,6 +79,8 @@ var NB_FRETS = 6
 var TOP_FRET = 7
 var NB_DISPLAYED_FRETS = 5
 
+var radius = 0.5 * RADIUS_RATIO_NUM * Math.min(INTER_STRINGS, INTER_FRETS) / RADIUS_RATIO_DEN
+
 var guitarStrings = ['E', 'A', 'D', 'G', 'B', 'E']
 var notes = ['A', 'Bb', 'B', 'C', 'C#', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'G#']
 var stringNotes = [7, 0, 5, 10, 2, 7] // could be dynamically deduced: notes.indexOf(guitarStrings[i]) for i in [0, guitarStrings.length[
@@ -120,57 +122,96 @@ function getFirstDisplayedFret(guitarChord, numberOfDisplayedFrets) {
 }
 
 function createSvgChord(guitarChord, uniqueId) {
-    var svgGlob = drawSvg('svg', {id: 'svg'+uniqueId, width:GUI_RECTANGLE_CHORD_WIDTH + SMALL_INSET, height:GUI_RECTANGLE_CHORD_HEIGHT + SMALL_INSET})
-    svgGlob.appendChild(drawSvg('rect', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT, fill:GUI_COLOR_LIGHTBLUE, stroke:'black', 'stroke-width':1}))
+    var svgGlob = createSvgGlob(uniqueId)
+    var svgTop = createSvgTop(svgGlob)
+    var svgBottom = createSvgBottom(svgGlob)
 
-    var svgTop = drawSvg('svg', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:TITLE_HEIGHT})
-    svgGlob.appendChild(svgTop)
-
-    svgTop.appendChild(drawSvgChordName({id: 'name'+uniqueId, x:'50%', y:'50%', fill:'black', 'alignment-baseline':"middle", 'text-anchor':"middle", style:GUI_PLAIN_FONT}, guitarChord.firstName, guitarChord.alternateName))
-
-    var svgBottom = drawSvg('svg', {x:SMALL_INSET / 2, y:TITLE_HEIGHT, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT - TITLE_HEIGHT})
-    svgGlob.appendChild(svgBottom)
-
-    svgBottom.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET, width:(NB_STRINGS - 1) * INTER_STRINGS, height:(NB_FRETS - 1) * INTER_FRETS, fill:'white', stroke:'white'}))
-    svgBottom.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET - TOP_FRET, width:(NB_STRINGS - 1) * INTER_STRINGS, height:TOP_FRET, fill:'white', stroke:'black'}))
-    drawFrets(svgBottom)
-    var radius = 0.5 * RADIUS_RATIO_NUM * Math.min(INTER_STRINGS, INTER_FRETS) / RADIUS_RATIO_DEN
-    var firstDisplayedFret = getFirstDisplayedFret(guitarChord, NB_DISPLAYED_FRETS)
-    if (1 < firstDisplayedFret) {
-        svgBottom.appendChild(drawSvgText({x:SMALL_INSET + SMALL_INSET / 2, y:BIG_INSET - INTER_FRETS / 2 + INTER_FRETS, 'alignment-baseline':"middle", style:GUI_SMALL_FONT}, firstDisplayedFret + 'fr'))
-    }
-    for (var i = 0; i < guitarStrings.length; i++)
-    {
-        var finger = guitarChord.fingers[i]
-        if (finger == 'x') {
-            svgBottom.appendChild(drawSvgText({x:BIG_INSET + i * INTER_STRINGS, y:BIG_INSET, 'text-anchor':"middle", fill:GUI_COLOR_ORANGERED, style:GUI_PLAIN_FONT}, 'x'))
-            svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * INTER_STRINGS, y1:BIG_INSET, x2:BIG_INSET + i * INTER_STRINGS, y2:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS, stroke:GUI_COLOR_ORANGERED, 'stroke-dasharray':'2,3'}))
-        }
-        else {
-            svgBottom.appendChild(drawSvg('line', {x1:BIG_INSET + i * INTER_STRINGS, y1:BIG_INSET, x2:BIG_INSET + i * INTER_STRINGS, y2:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS, stroke:'black'}))
-            var playedNote = treble(i, finger)
-            svgBottom.appendChild(drawSvgNotePlayed({x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
-            if (1 < firstDisplayedFret) {
-                finger -= (firstDisplayedFret - 1)
-            }
-            if (finger >= 1) {
-                svgBottom.appendChild(drawSvg('circle', {cx:BIG_INSET + i * INTER_STRINGS, cy:BIG_INSET - INTER_FRETS / 2 + finger * INTER_FRETS, r:radius}))
-            } 
-        }
-    }
-
-    for (var i = 0; i < guitarStrings.length; i++)
-    {
-        svgBottom.appendChild(drawSvgText({x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET / 2 + CENTER, fill:GUI_COLOR_GREY, style:GUI_SMALL_FONT}, guitarStrings[i]))
-    }
+    drawChordName(svgTop, uniqueId, guitarChord)
+    drawShaft(svgBottom)
+    drawChord(svgBottom, guitarChord)
 
     return svgGlob
 }
 
-function drawFrets(svg) {
-    for (var i = 0; i < NB_FRETS; i++) {
-        svg.appendChild(drawSvg('line', { x1: BIG_INSET, y1: BIG_INSET + i * INTER_FRETS, x2: BIG_INSET + (NB_STRINGS - 1) * INTER_STRINGS, y2: BIG_INSET + i * INTER_FRETS, stroke: 'gray' }))
+function drawChord(svg, guitarChord) {
+    var firstDisplayedFret = getFirstDisplayedFret(guitarChord, NB_DISPLAYED_FRETS)
+    drawFirstDisplayedFret(svg, firstDisplayedFret)
+    for (var i = 0; i < guitarStrings.length; i++)
+    {
+        var finger = guitarChord.fingers[i]
+        if (finger == 'x') {
+            drawNotPlayedString(svg, i)
+        }
+        else {
+            drawPlayedString(svg, i)
+            drawFinger(svg, i, finger, firstDisplayedFret)
+            drawPlayedNote(svg, i, finger)
+        }
     }
+}
+
+function createSvgGlob(uniqueId) {
+    var svgGlob = drawSvg('svg', {id:'svg'+uniqueId, width:GUI_RECTANGLE_CHORD_WIDTH + SMALL_INSET, height:GUI_RECTANGLE_CHORD_HEIGHT + SMALL_INSET})
+    svgGlob.appendChild(drawSvg('rect', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT, fill:GUI_COLOR_LIGHTBLUE, stroke:'black', 'stroke-width':1}))
+    return svgGlob
+}
+
+function createSvgTop(svgGlob) {
+    var svgTop = drawSvg('svg', {x:SMALL_INSET / 2, y:SMALL_INSET / 2, width:GUI_RECTANGLE_CHORD_WIDTH, height:TITLE_HEIGHT})
+    svgGlob.appendChild(svgTop)
+    return svgTop
+}
+
+function createSvgBottom(svgGlob) {
+    var svgBottom = drawSvg('svg', {x:SMALL_INSET / 2, y:TITLE_HEIGHT, width:GUI_RECTANGLE_CHORD_WIDTH, height:GUI_RECTANGLE_CHORD_HEIGHT - TITLE_HEIGHT})
+    svgGlob.appendChild(svgBottom)
+    return svgBottom
+}
+
+function drawShaft(svg) {
+    svg.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET - TOP_FRET, width:(NB_STRINGS - 1) * INTER_STRINGS, height:TOP_FRET, fill:'white', stroke:'black'}))
+    svg.appendChild(drawSvg('rect', {x:BIG_INSET, y:BIG_INSET, width:(NB_STRINGS - 1) * INTER_STRINGS, height:(NB_FRETS - 1) * INTER_FRETS, fill:'white', stroke:'white'}))
+    for (var i = 0; i < NB_FRETS; i++) {
+        svg.appendChild(drawSvg('line', {x1:BIG_INSET, y1:BIG_INSET + i * INTER_FRETS, x2:BIG_INSET + (NB_STRINGS - 1) * INTER_STRINGS, y2:BIG_INSET + i * INTER_FRETS, stroke:'gray'}))
+    }
+    for (var i = 0; i < guitarStrings.length; i++)
+    {
+        svg.appendChild(drawSvgText({x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET / 2 + CENTER, fill:GUI_COLOR_GREY, style:GUI_SMALL_FONT}, guitarStrings[i]))
+    }
+}
+
+function drawChordName(svg, uniqueId, guitarChord) {
+    svg.appendChild(drawSvgChordName({id:'name'+uniqueId, x:'50%', y:'50%', fill:'black', 'alignment-baseline':"middle", 'text-anchor':"middle", style:GUI_PLAIN_FONT}, guitarChord.firstName, guitarChord.alternateName))
+}
+
+function drawFirstDisplayedFret(svg, firstDisplayedFret) {
+    if (firstDisplayedFret > 1) {
+        svg.appendChild(drawSvgText({x:SMALL_INSET + SMALL_INSET / 2, y:BIG_INSET - INTER_FRETS / 2 + INTER_FRETS, 'alignment-baseline':"middle", style:GUI_SMALL_FONT}, firstDisplayedFret + 'fr'))
+    }
+}
+
+function drawNotPlayedString(svg, i) {
+    svg.appendChild(drawSvgText({x:BIG_INSET + i * INTER_STRINGS, y:BIG_INSET, 'text-anchor':"middle", fill:GUI_COLOR_ORANGERED, style:GUI_PLAIN_FONT}, 'x'))
+    svg.appendChild(drawSvg('line', {x1:BIG_INSET + i * INTER_STRINGS, y1:BIG_INSET, x2:BIG_INSET + i * INTER_STRINGS, y2:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS, stroke:GUI_COLOR_ORANGERED, 'stroke-dasharray':'2,3'}))
+}
+
+function drawPlayedString(svg, i) {
+    svg.appendChild(drawSvg('line', {x1:BIG_INSET + i * INTER_STRINGS, y1:BIG_INSET, x2:BIG_INSET + i * INTER_STRINGS, y2:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS, stroke:'black'}))
+}
+
+function drawFinger(svg, i, finger, firstDisplayedFret) {
+    var displayedFinger = finger
+    if (firstDisplayedFret > 1) {
+        displayedFinger -= (firstDisplayedFret - 1)
+    }
+    if (displayedFinger >= 1) {
+        svg.appendChild(drawSvg('circle', {cx:BIG_INSET + i * INTER_STRINGS, cy:BIG_INSET - INTER_FRETS / 2 + displayedFinger * INTER_FRETS, r:radius}))
+    } 
+}
+
+function drawPlayedNote(svg, i, finger) {
+    var playedNote = treble(i, finger)
+    svg.appendChild(drawSvgNotePlayed({x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
 }
 
 var url = "http://localhost:8000/guitarChordDictionarySample.json"
