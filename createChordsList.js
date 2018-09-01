@@ -214,7 +214,7 @@ function drawPlayedNote(svg, i, finger) {
     svg.appendChild(drawSvgNotePlayed({x:BIG_INSET - CENTER + i * INTER_STRINGS, y:BIG_INSET + (NB_FRETS - 1) * INTER_FRETS + BIG_INSET / 2, style:GUI_SMALL_FONT}, playedNote[0], (playedNote.length == 2) ? playedNote[1] : null))
 }
 
-var url = "http://localhost:8000/guitarChordDictionary.json"
+var url = "/guitarChordDictionary.json"
 var chords = loadJsonFile(url)
 
 var svgContainer = document.getElementById('svgContainer')
