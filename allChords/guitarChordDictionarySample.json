@@ -1,0 +1,27 @@
+{
+"guitarChords":[
+    {"firstName":"A", "alternateName":"Amaj", "fingers":[0, 0, 2, 2, 2, 0], "notes":"(C# E  A)", "type":"major triad"},
+    {"firstName":"A", "alternateName":"Amaj", "fingers":[0, 4, "x", 2, 5, 0], "notes":"(Db E  A)", "type":"major triad"},
+    {"firstName":"A", "alternateName":"Amaj", "fingers":[5, 7, 7, 6, 5, 5], "notes":"(Db E  A)", "type":"major triad"},
+    {"firstName":"A", "alternateName":"Amaj", "fingers":["x", 0, 2, 2, 2, 0], "notes":"(Db E  A)", "type":"major triad"},
+    {"firstName":"A", "alternateName":"Amaj", "fingers":["x", 4, 7, "x", "x", 5], "notes":"(Db E  A)", "type":"major triad"},
+    {"firstName":"A #5", "alternateName":"Aaug", "fingers":["x", 0, 3, 2, 2, 1], "notes":"(Db F  A)", "type":"augmented triad"},
+    {"firstName":"A #5", "alternateName":"Aaug", "fingers":["x", 0, "x", 2, 2, 1], "notes":"(Db F  A)", "type":"augmented triad"},
+    {"firstName":"A/Ab", "alternateName":"", "fingers":["x", 0, 2, 1, 2, 0], "notes":"(Db E  Ab A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/B", "alternateName":"", "fingers":[0, 0, 2, 4, 2, 0], "notes":"(Db E  A  B)", "type":"major triad (altered bass)"},
+    {"firstName":"A/B", "alternateName":"", "fingers":["x", 0, 7, 6, 0, 0], "notes":"(Db E  A  B)", "type":"major triad (altered bass)"},
+    {"firstName":"A/D", "alternateName":"", "fingers":["x", 0, 0, 2, 2, 0], "notes":"(Db D  E  A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/D", "alternateName":"", "fingers":["x", "x", 0, 2, 2, 0], "notes":"(Db D  E  A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/D", "alternateName":"", "fingers":["x", "x", 0, 6, 5, 5], "notes":"(Db D  E  A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/D", "alternateName":"", "fingers":["x", "x", 0, 9, 10, 9], "notes":"(Db D  E  A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/G", "alternateName":"", "fingers":[3, "x", 2, 2, 2, 0], "notes":"(Db E  G  A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/G", "alternateName":"", "fingers":["x", 0, 2, 0, 2, 0], "notes":"(Db E  G  A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/G", "alternateName":"", "fingers":["x", 0, 2, 2, 2, 3], "notes":"(Db E  G  A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/Gb", "alternateName":"", "fingers":[0, 0, 2, 2, 2, 2], "notes":"(Db E  Gb A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/Gb", "alternateName":"", "fingers":[0, "x", 4, 2, 2, 0], "notes":"(Db E  Gb A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/Gb", "alternateName":"", "fingers":[2, "x", 2, 2, 2, 0], "notes":"(Db E  Gb A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/Gb", "alternateName":"", "fingers":["x", 0, 4, 2, 2, 0], "notes":"(Db E  Gb A)", "type":"major triad (altered bass)"},
+    {"firstName":"A/Gb", "alternateName":"", "fingers":["x", "x", 2, 2, 2, 2], "notes":"(Db E  Gb A)", "type":"major triad (altered bass)"},
+    {"firstName":"A5", "alternateName":"A(no 3rd)", "fingers":[5, 7, 7, "x", "x", 5], "notes":"(E  A)", "type":"root and 5th (power chord)"}
+]
+}
