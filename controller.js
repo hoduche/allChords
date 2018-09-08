@@ -1,10 +1,12 @@
-function reactToUserInput() {
-    var userInput = document.getElementById("searchZone").value.toLowerCase()
+function activateSearchEngine() {
+    var userInput = document.getElementById("searchZone").value
+    var pattern = userInput.replace(/\./g, "\\\.").replace(/\*/g, ".*").replace(/([\\ \+ \? \[ \^ \] \$ \( \) \{ \} \= \! \< \> \| \: \-])/g, "\\\$1")
+    var regex = new RegExp(pattern)
 
     for (var i = 0; i < chords.guitarChords.length; i++) {
         var svgElement = document.getElementById('svg' + i)
-        var chordName = document.getElementById('name' + i).innerHTML.toLowerCase()
-        if (chordName.includes(userInput)) {
+        var chordName = document.getElementById('name' + i).innerHTML
+        if (regex.test(chordName)) {
             svgElement.style.display = ""
         } else {
             svgElement.style.display = "none"
@@ -32,20 +34,20 @@ function reactToKeyboard(e) {
 
 function displayMajorChords() {
     document.getElementById("searchZone").value = "maj"
-    reactToUserInput()
+    activateSearchEngine()
 }
 
 function displayMinorChords() {
     document.getElementById("searchZone").value = "min"
-    reactToUserInput()
+    activateSearchEngine()
 }
 
 function displayMajor7thChords() {
     document.getElementById("searchZone").value = "maj7"
-    reactToUserInput()
+    activateSearchEngine()
 }
 
 function displayMinor7thChords() {
     document.getElementById("searchZone").value = "m7"
-    reactToUserInput()
+    activateSearchEngine()
 }

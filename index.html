@@ -14,7 +14,7 @@
     <span id="navigationButton2" class="navigationButton stdtext" onclick="openCloseNav()" style="display:none">&#9664</span>
 
     <div id="headerPanel" class="centerfixed">
-        <input id="searchZone" type="text" onkeyup="reactToUserInput()" placeholder="Search for guitar chords" title="Type in a chord - use * as joker character" autofocus>
+        <input id="searchZone" type="text" onkeyup="activateSearchEngine()" placeholder="Search for guitar chords" title="Type in a chord - use * as joker character" autofocus>
     </div>
 
     <div id="resultsPanel">
@@ -29,7 +29,7 @@
     <a href="#" onclick="displayMinor7thChords()">m 7th</a>
 </div>
 
-<script src="reactToUserInput.js"></script>
+<script src="controller.js"></script>
 <script src="createChordsList.js"></script>
 
 </body>
