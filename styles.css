@@ -28,8 +28,8 @@ body {
     position: fixed;
     top: 0;
     width: 100%;
-    padding-top: 40px;
-    padding-bottom: 35px;
+    padding-top: 15px;
+    padding-bottom: 13px;
 }
 
 #searchZone {
@@ -37,14 +37,14 @@ body {
     background-position: 10px 12px;
     background-repeat: no-repeat;
     background-size: 20px;
-    width: 155px;
+    width: 175px;
     font-size: 16px;
     padding: 12px 20px 12px 40px;
     border: 1px solid #ddd;
 }
 
 #resultsPanel {
-  margin-top: 120px; /* Add a top margin to avoid content overlay */
+  margin-top: 72px; /* Add a top margin to avoid content overlay */
   text-align: center;
   width: 100%;
 }
