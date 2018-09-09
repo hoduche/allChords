@@ -23,10 +23,15 @@
 </div>
 
 <div id="sideNavBar" class="sidenav">
-    <a href="#" onclick="displayMajorChords()">Major</a>
-    <a href="#" onclick="displayMinorChords()">Minor</a>
-    <a href="#" onclick="displayMajor7thChords()">M 7th</a>
-    <a href="#" onclick="displayMinor7thChords()">m 7th</a>
+    <a href="#" onclick="displaySpecificChords('major triad')">M</a>
+    <a href="#" onclick="displaySpecificChords('minor triad')">m</a>
+    <a href="#" onclick="displaySpecificChords('major triad, minor 7th')">7</a>
+    <a href="#" onclick="displaySpecificChords('minor triad, minor 7th')">m7</a>
+    <a href="#" onclick="displaySpecificChords('major triad, major 7th')">7M</a>
+    <a href="#" onclick="displaySpecificChords('minor triad, major 7th')">m7M</a>
+    <a href="#" onclick="displaySpecificChords('major triad plus 6th')">6</a>
+    <a href="#" onclick="displaySpecificChords('minor triad plus 6th')">m6</a>
+    <a href="#" onclick="displaySpecificChords('augmented triad')">aug</a>
 </div>
 
 <script src="controller.js"></script>

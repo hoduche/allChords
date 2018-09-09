@@ -1,31 +1,3 @@
-function activateSearchEngine2() {
-    var userInput = document.getElementById("searchZone").value
-    var isRegex = false
-    if (userInput.includes('*')) {
-        isRegex = true
-        var pattern = '\^' + userInput.replace(/\./g, "\\\.").replace(/\*/g, ".*").replace(/([\\ \+ \? \[ \^ \] \$ \( \) \{ \} \= \! \< \> \| \: \-])/g, "\\\$1") + '\$'
-        var regex = new RegExp(pattern)
-    }
-
-    while (svgContainer.lastChild) {
-        svgContainer.removeChild(svgContainer.lastChild);
-    }
-
-    var uniqueId = 0
-    for (var each of chords.guitarChords) {
-        if (!isRegex) {
-            if (userInput === each.firstName || userInput === each.alternateName) {
-                var svgChord = createSvgChord(each, uniqueId++)
-                svgContainer.appendChild(svgChord)
-            }
-        }
-        else if (regex.test(each.firstName)) {
-            var svgChord = createSvgChord(each, uniqueId++)
-            svgContainer.appendChild(svgChord)
-        }
-    }
-}
-
 function activateSearchEngine() {
     var userInput = document.getElementById("searchZone").value
     if (userInput === "")
@@ -68,22 +40,7 @@ function reactToKeyboard(event) {
     }
 }
 
-function displayMajorChords() {
-    document.getElementById("searchZone").value = "major triad"
-    activateSearchEngine()
-}
-
-function displayMinorChords() {
-    document.getElementById("searchZone").value = "minor triad"
-    activateSearchEngine()
-}
-
-function displayMajor7thChords() {
-    document.getElementById("searchZone").value = "major triad, minor 7th"
-    activateSearchEngine()
-}
-
-function displayMinor7thChords() {
-    document.getElementById("searchZone").value = "minor triad, minor 7th"
+function displaySpecificChords(input) {
+    document.getElementById("searchZone").value = input
     activateSearchEngine()
 }
